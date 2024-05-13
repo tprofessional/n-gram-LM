@@ -18,10 +18,10 @@ def tokenize(text, tk_counts):
     # token_counts = collections.Counter()
     # not sure if we need to lowercase the words
     text = text.lower()
-    print(text)
+    # print(text)
     # split tokens by spaces
     tokens = text.split()
-    print(tokens)
+    # print(tokens)
     # add token counts from the current sentence
     tk_counts.update(tokens)
 
