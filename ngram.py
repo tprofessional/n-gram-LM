@@ -5,35 +5,25 @@ import math
 import numpy as np
 # utils.py
 from utils import *
-import pandas as pd # delete later
 
 
 #----Load the Training Data---
-# def read(file):
-#     with open(file,'r') as f:
-#         sentences = f.readlines()
-
-def read_data(path):
-    train_frame = pd.read_csv(path + 'dev.csv')
-
-    # You can form your test set from train set
-    # We will use our test set to evaluate your model
-    try:
-        test_frame = pd.read_csv(path + 'test.csv')
-    except:
-        test_frame = train_frame
-
-    return train_frame, test_frame
+def read(file):
+    with open(file,'r') as f:
+        sentences = f.readlines()
+    return sentences
 
 # load data in main.py instead?
 
 #---- Tokenizing Data (count frequency of each token, set up <UNK>, <STOP> tokens) ----
 '''
 args:
-    sentences: array of training data n x f, n = number of samples and f = number of features
+    sentences: array of training data with length n, n = number of samples
 
 returns dictonary of tokenized data with token counts as dict values
 '''
+
+'''need to rewrite tokenize'''
 def processing(sentences):
     # returns a container that stores elements as dict keys with their counts as dict values
     token_counts = clt.Counter()
@@ -42,12 +32,13 @@ def processing(sentences):
     
     # Loop over each sentence in input list of sentences
     for sentence in sentences:
+        # print(sentence)
         #loop over each word in sentence
         for token in sentence:
             # increment count of word
             token_counts[token] += 1
             # get a list of tokens split by spaces for each sentence
-            toks, token_counts = tokenize(sentence)
+            toks, token_counts = tokenize(sentence, token_counts)
             # append current sentence's tokens to parent tokens
             tokens.append(toks)
 
@@ -80,8 +71,11 @@ def count_ngrams(sentences, n):
         #iterate over each n-gram (continuous sequence)
         for i in range(n-1, len(sentences)):
             ngram = tuple(sentence[i - n+1 : i + 1])
-### unfinished ###
+            prefix = ngram[:-1]
+            token = ngram[-1]
+            counts[prefix][token] += 1
     return counts
+
 #---- Calculating probability of a sentence ----
 def probabilities(counts):
     # empty dict for probabilities of tokens
@@ -95,13 +89,48 @@ def probabilities(counts):
         return probabilities 
 
 #---- Calculating perplexity of unseen corpus (dev or test data)----
+# is n the number of grams
 def perplexity(sentence, probabilities, n):
+    # might only need <START> since <STOP> is included in vocab already
     sentence = ['<START>']*(n-1) + sentence + ['<STOP>']
+    log_prob = 0
+    for i in range(n-1, len(sentence)):
+        ngram = tuple(sentence[i-n+1:i+1])
+        prefix = ngram[:-1]
+        token = ngram[-1]
+        prob = probabilities[prefix].get(token, 0)
+        log_prob += -math.log(prob) if prob > 0 else float('inf')
+    return math.exp(log_prob / (len(sentence) - n + 1))
     
+#NOTE: only if we need
+# Read and preprocess the data
+sentences = read('./A2-Data/1b_benchmark.train.tokens')
+sentences = processing(sentences)
 
-if __name__ == 'main()':
-    read_data('../A2-Data')
-    pass
+# Calculate probabilities for unigram, bigram, and trigram models
+unigram_counts = count_ngrams(sentences, 1)
+bigram_counts = count_ngrams(sentences, 2)
+trigram_counts = count_ngrams(sentences, 3)
+
+unigram_probs = probabilities(unigram_counts)
+bigram_probs = probabilities(bigram_counts)
+trigram_probs = probabilities(trigram_counts)
+
+# Calculate perplexity for a test sentence
+test_sentence = ['HDTV', '.']
+print(perplexity(test_sentence, unigram_probs, 1))
+print(perplexity(test_sentence, bigram_probs, 2))
+print(perplexity(test_sentence, trigram_probs, 3))
+
+if __name__ == "__main__":
+    # get data as an np array of each sentence
+    # shape is (61530, )
+    # sentences = np.array(read('./A2-Data/1b_benchmark.train.tokens'))
+    # print(type(sentences))
+    # print(sentences.shape)
+    # print(sentences[0])
+    # should return np array of all tokens from the training data
+    tokens = np.array(processing(sentences))
 
 
 
