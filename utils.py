@@ -24,6 +24,7 @@ def tokenize(text, tk_counts):
     # print(tokens)
     # add token counts from the current sentence
     tk_counts.update(tokens)
+    # print("in tokenize: ", tk_counts)
 
     return tokens, tk_counts
 
