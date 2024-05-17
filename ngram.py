@@ -25,9 +25,6 @@ returns dictonary of tokenized data with token counts as dict values
 
 '''need to rewrite tokenize'''
 def processing(sentences):
-    # count of <STOP> = numSamples
-    # actually jsut convert the '\n' token to <STOP> at the end so we dont have to recount
-    # print(sentences)
     # returns a container that stores elements as dict keys with their counts as dict values
     token_counts = clt.Counter()
     # list to store all tokens from training data
@@ -36,7 +33,7 @@ def processing(sentences):
     stop = '<STOP>'
     
     # dictionary implementation
-    # tokens_counts = clt.defaultdict()
+    toks_counts = dict()
 
     # Loop over each sentence in input list of sentences
     for sentence in sentences:
@@ -51,16 +48,17 @@ def processing(sentences):
     # print("\ntoken counts: ", token_counts)
 
     # ---- for words that occur less than 3 times, convert them into the UNK token ----
+    
     # only need unique tokens
     final_tokens = list(set(tokens)) # list to hold unique tokens including <UNK> and <STOP>
     # add unk token
     final_tokens.append(unk)
     # add stop token
     final_tokens.append(stop)
-    # get the new counter object?
-    token_counts.update(final_tokens)
-    # the number of stop tokens is the same as the number of sentences
-    token_counts[stop] = len(sentences)
+
+    token_counts.update(final_tokens) # get the new counter object?
+    token_counts[stop] = len(sentences) # the number of stop tokens is the same as the number of sentences
+    token_counts[unk] = 0 # start with 0 unk tokens
 
     # print("final tokens before unk: ", final_tokens)
     # print("final token counts before unk: ", token_counts)
@@ -69,7 +67,9 @@ def processing(sentences):
         # print('before: ')
         # print('word: ', word, '\tcount: ', token_counts[word])
         # if count of this word is less than 3
+        print(word, ': ',token_counts[word])
         if token_counts[word] < 3:
+            # print('this word is unk: ', word)
             # increment the count of unk
             token_counts[unk] += 1
             # remove the word from the tokens list (replaced with unk)
@@ -144,7 +144,6 @@ def probabilities_add_one(counts, alpha=1):
     return probabilities
 
 
-
 #---- Calculating perplexity of unseen corpus (dev or test data)----
 # is n the number of grams
 '''def perplexity(sentence, trigram_probs, n):
@@ -169,7 +168,6 @@ def probabilities_add_one(counts, alpha=1):
         log_prob += -math.log(prob) if prob > 0 else float('inf')
     return math.exp(log_prob / (len(sentence) - n + 1))
 '''
-import math
 
 def perplexity(sentence, trigram_probs, n):
     if not isinstance(sentence, list):
@@ -197,14 +195,15 @@ if __name__ == "__main__":
     # Read and preprocess the data
     # get data as an np array of each sentence
     # shape is (61530, )
-    sentences = read('./A2-Data/1b_benchmark.train.tokens')
+    # sentences = read('./A2-Data/1b_benchmark.train.tokens')
+    sentences = read('./A2-Data/smaller.train.tokens')
     print("num samples: ", len(sentences))
     tokens = processing(sentences)
     print("length after tokenizing: ", len(tokens))
 
     # should return np array of all tokens from the training data
     # tokens = np.array(processing(sentences))
-
+    '''
     # Calculate probabilities for unigram, bigram, and trigram models
     unigram_counts = count_ngrams(sentences, 1)
     bigram_counts = count_ngrams(sentences, 2)
@@ -227,7 +226,7 @@ if __name__ == "__main__":
     print(perplexity(test_sentence, unigram_probs, 1))
     print(perplexity(test_sentence, bigram_probs, 2))
     print(perplexity(test_sentence, trigram_probs, 3))
-    
+    '''
 
 
 '''
