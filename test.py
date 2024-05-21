@@ -76,19 +76,31 @@ def processing(sentences):
    
     return tok_counts, all_toks
 
+def unigram(sentences, all_toks):
+    text = []
+    for sentence in sentences:
+        # get the sentence as a list of its tokens
+        snt = sentence.split()
+        # if the word has a count less than 3, replace it with the unk token
+        snt = [word if all_toks[word] >= 3 else '<UNK>' for word in snt]
+        snt.insert(0, '<START>')
+        snt.append('<STOP>')
+        text.append(snt)
+
+    return text
 
 
 if __name__ == "__main__":
     # Read and preprocess the data
     # sentences = read('./A2-Data/1b_benchmark.train.tokens')
     files = ['./A2-Data/1b_benchmark.train.tokens', './A2-Data/small.train.tokens', './A2-Data/smaller.train.tokens']
-    file = files[0]
+    file = files[1]
     sentences = read(file)
     print("num samples: ", len(sentences))
     tokens, all_toks = processing(sentences)
     print('unique tokens without deletion: ', len(all_toks))
     print('after all processing: ', len(tokens))
-
+    print(unigram(sentences, all_toks))
 
 
     if file == files[0]:
