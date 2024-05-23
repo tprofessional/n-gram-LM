@@ -138,9 +138,7 @@ def count_ngrams(text, n):
             prefix = ngram[:-1] # first n-1 words
             print('ngram: ', ngram)
             print('prefix: ', prefix)
-            token = ngram[-1] # last word ----- I ADDED A COLON AFTER -1
-            counts[prefix][token] += 1 # increment count of token
-    return counts
+            
 
 # take the output of count_ngrams() to calculate probability for a sentence
 def probabilities(counts):
