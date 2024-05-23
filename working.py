@@ -246,9 +246,9 @@ def linear_interpolation(unigram, bigram, trigram, lambdas, data):
     perplexity = np.exp(perplexity / N)
     return perplexity
 '''
+    
 
-# Main function
-def main():
+if __name__ == "__main__":
     # Load data
     train_data = read('./A2-Data/1b_benchmark.train.tokens')
     dev_data = read('./A2-Data/1b_benchmark.dev.tokens')
@@ -316,10 +316,7 @@ def main():
         print(f"{linear_interpolation(unigram_lm.model, bigram_lm.model, trigram_lm.model, lambdas, dev_data)}")
         print("\n")
 
-# Report best hyperparameters on test set
-best_lambdas = (0.1, 0.3, 0.6)
-print(f"Best Hyperparameters (lambdas = {best_lambdas}) Perplexity on Test Set")
-# print(f"Test Set Perplexity: {linear_interpolation(unigram_lm.model, bigram_lm.model, trigram_lm.model, best_lambdas, test_data)}")
-    
-if __name__ == "__main__":
-    main()
+    # Report best hyperparameters on test set
+    best_lambdas = (0.1, 0.3, 0.6)
+    print(f"Best Hyperparameters (lambdas = {best_lambdas}) Perplexity on Test Set")
+    # print(f"Test Set Perplexity: {linear_interpolation(unigram_lm.model, bigram_lm.model, trigram_lm.model, best_lambdas, test_data)}")
