@@ -3,48 +3,6 @@ import math
 import random
 import numpy as np
 
-# Helper functions
-''' original functions
-# split the words
-def tokenize(text):
-    return text.split()
-
-# returns: a list of all unique tokens, including unk token after processing
-#          a dictionary of each unique word and its frequencies
-def build_vocab(data, threshold=3):
-    word_counts = clt.Counter()
-    for line in data:
-        tokens = tokenize(line)
-        word_counts.update(tokens)
-    vocab = {word for word, count in word_counts.items() if count >= threshold}
-    # print('word counts: ', len(word_counts))
-    return vocab, word_counts
-
-# process the text by replacing unk tokens with unk token
-def replace_oov(tokens, vocab):
-    processed_toks = [token if token in vocab else "<UNK>" for token in tokens]
-    # print(len(processed_toks))
-    return processed_toks
-
-def preprocess_data(data, vocab):
-    processed_data = []
-    for line in data:
-        # split
-        tokens = tokenize(line)
-        # replace unk words with unk token
-        tokens = replace_oov(tokens, vocab)
-        # add processed token list to the processed data
-        processed_data.append(tokens)
-    print(len(processed_data)) # should be num samples
-    return processed_data
-
-# Load data
-def load_data(file_path):
-    with open(file_path, 'r') as file:
-        data = file.readlines()
-    return data
-'''
-
 def read(file):
     with open(file,'r') as f:
         sentences = f.readlines()
@@ -141,7 +99,6 @@ def tokenize(sentences, all_counts):
 # Language Model classes
 class UnigramLM:
     def __init__(self):
-        # self.vocab = vocab
         self.model = clt.defaultdict(lambda: 0)
 
     def train(self, data):
@@ -170,7 +127,6 @@ class UnigramLM:
 
 class BigramLM:
     def __init__(self):
-        # self.vocab = vocab
         self.model = clt.defaultdict(lambda: clt.defaultdict(int))
         self.bigram_counts = clt.defaultdict(int)
         self.unigram_counts = clt.defaultdict(int)
@@ -222,7 +178,6 @@ class BigramLM:
 
 class TrigramLM:
     def __init__(self):
-        # self.vocab = vocab
         self.model = clt.defaultdict(lambda: clt.defaultdict(lambda: clt.defaultdict(lambda: 0)))
 
     def train(self, data):
