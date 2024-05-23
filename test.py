@@ -131,13 +131,13 @@ def count_ngrams(text, n):
     counts = clt.defaultdict(clt.Counter) 
     for sentence in text:
         #iterate over each n-gram in the sentence(continuous sequence of n words)
-        # n-gram is represented as a tuple of words (as far as i can understand)
-        print('beginning of sentence: ', sentence[0])
-        print('type(sentence) = ', type(sentence))
+        # iterate num_words - (n-1) times
         for i in range(n-1, len(text)): # split the n-gram into prefix and token
-            ngram = tuple(sentence[i - n+1 : i + 1]) #
+            # ngram is the current word and the previous n-1 words (start -> i - n + 1 : end -> i + 1)
+            ngram = tuple(sentence[i - n+1 : i + 1]) # n-gram is represented as a tuple of words
             prefix = ngram[:-1] # first n-1 words
-            print(ngram)
+            print('ngram: ', ngram)
+            print('prefix: ', prefix)
             token = ngram[-1] # last word ----- I ADDED A COLON AFTER -1
             counts[prefix][token] += 1 # increment count of token
     return counts
