@@ -1,3 +1,5 @@
+# authors: Tarun Sivaraj, Trisha Moorkoth, Jane Choi
+
 import collections as clt
 import math
 import random
@@ -102,7 +104,6 @@ class UnigramLM:
         self.model = clt.defaultdict(lambda: 0)
 
     def train(self, data):
-        
         total_count = 0
         for sentence in data:
             for token in sentence:
@@ -133,9 +134,6 @@ class BigramLM:
 
 
     def fit(self, data):
-        self.unigram_counts = clt.defaultdict(int)
-        self.bigram_counts = clt.defaultdict(int)
-
         for sentence in data:
             for i in range(len(sentence)):
                 self.unigram_counts[sentence[i]] += 1
@@ -226,26 +224,6 @@ def linear_interpolation(unigram, bigram, trigram, lambdas, data):
                 log_prob += 0
             word_count += 1
     return math.exp(-log_prob / word_count)
-
-'''def linear_interpolation(unigram_model, bigram_model, trigram_model, lambdas, data):
-    lambda1, lambda2, lambda3 = lambdas
-    perplexity = 0
-    N = 0
-
-    for sentence in data:
-        sentence = ['<s>'] + sentence + ['</s>']
-        for i in range(2, len(sentence)):
-            unigram_prob = unigram_model[sentence[i]] / sum(unigram_model.values())
-            bigram_prob = bigram_model[sentence[i-1]][sentence[i]] / sum(bigram_model[sentence[i-1]].values())
-            trigram_prob = trigram_model[sentence[i-2]][sentence[i-1]][sentence[i]] / sum(trigram_model[sentence[i-2]][sentence[i-1]].values())
-            
-            interpolated_prob = lambda1 * unigram_prob + lambda2 * bigram_prob + lambda3 * trigram_prob
-            perplexity += -np.log(interpolated_prob)
-            N += 1
-
-    perplexity = np.exp(perplexity / N)
-    return perplexity
-'''
     
 
 if __name__ == "__main__":
@@ -266,6 +244,7 @@ if __name__ == "__main__":
     unigram_lm = UnigramLM()
     unigram_lm.train(train_data)
     bigram_lm = BigramLM()
+    bigram_lm.fit(train_data)
     bigram_lm.train(train_data)
     trigram_lm = TrigramLM()
     trigram_lm.train(train_data)
