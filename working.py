@@ -1,15 +1,18 @@
-import collections
+import collections as clt
 import math
 import random
 import numpy as np
 
 # Helper functions
 ''' original functions
+# split the words
 def tokenize(text):
     return text.split()
 
+# returns: a list of all unique tokens, including unk token after processing
+#          a dictionary of each unique word and its frequencies
 def build_vocab(data, threshold=3):
-    word_counts = collections.Counter()
+    word_counts = clt.Counter()
     for line in data:
         tokens = tokenize(line)
         word_counts.update(tokens)
@@ -17,6 +20,7 @@ def build_vocab(data, threshold=3):
     # print('word counts: ', len(word_counts))
     return vocab, word_counts
 
+# process the text by replacing unk tokens with unk token
 def replace_oov(tokens, vocab):
     processed_toks = [token if token in vocab else "<UNK>" for token in tokens]
     # print(len(processed_toks))
@@ -25,11 +29,13 @@ def replace_oov(tokens, vocab):
 def preprocess_data(data, vocab):
     processed_data = []
     for line in data:
+        # split
         tokens = tokenize(line)
+        # replace unk words with unk token
         tokens = replace_oov(tokens, vocab)
+        # add processed token list to the processed data
         processed_data.append(tokens)
-    print(len(tokens))
-    # print(len(processed_data))
+    print(len(processed_data)) # should be num samples
     return processed_data
 
 # Load data
@@ -38,6 +44,7 @@ def load_data(file_path):
         data = file.readlines()
     return data
 '''
+
 def read(file):
     with open(file,'r') as f:
         sentences = f.readlines()
@@ -47,7 +54,7 @@ def read(file):
 
 Arguments:
     text {str} -- sentence to be tokenized, such as "I love NLP"
-    tk_counts {Count container} -- collections.Counter() object to keep track of the number of each token
+    tk_counts {Count container} -- clt.Counter() object to keep track of the number of each token
 
 Keyword Arguments:
     pattern {str} -- reg-expression pattern for tokenizer (default: {default_pattern})
@@ -133,9 +140,9 @@ def tokenize(sentences, all_counts):
 
 # Language Model classes
 class UnigramLM:
-    def __init__(self, vocab):
-        self.vocab = vocab
-        self.model = collections.defaultdict(lambda: 0)
+    def __init__(self):
+        # self.vocab = vocab
+        self.model = clt.defaultdict(lambda: 0)
 
     def train(self, data):
         
@@ -158,16 +165,16 @@ class UnigramLM:
     
 
 class BigramLM:
-    def __init__(self, vocab):
-        self.vocab = vocab
-        self.model = collections.defaultdict(lambda: collections.defaultdict(int))
-        self.bigram_counts = collections.defaultdict(int)
-        self.unigram_counts = collections.defaultdict(int)
+    def __init__(self):
+        # self.vocab = vocab
+        self.model = clt.defaultdict(lambda: clt.defaultdict(int))
+        self.bigram_counts = clt.defaultdict(int)
+        self.unigram_counts = clt.defaultdict(int)
 
 
     def fit(self, data):
-        self.unigram_counts = collections.defaultdict(int)
-        self.bigram_counts = collections.defaultdict(int)
+        self.unigram_counts = clt.defaultdict(int)
+        self.bigram_counts = clt.defaultdict(int)
 
         for sentence in data:
             for i in range(len(sentence)):
@@ -210,9 +217,9 @@ class BigramLM:
         # return bigram_model
 
 class TrigramLM:
-    def __init__(self, vocab):
-        self.vocab = vocab
-        self.model = collections.defaultdict(lambda: collections.defaultdict(lambda: collections.defaultdict(lambda: 0)))
+    def __init__(self):
+        # self.vocab = vocab
+        self.model = clt.defaultdict(lambda: clt.defaultdict(lambda: clt.defaultdict(lambda: 0)))
 
     def train(self, data):
         for sentence in data:
@@ -285,20 +292,20 @@ def main():
     dev_data = read('./A2-Data/1b_benchmark.dev.tokens')
     test_data = read('./A2-Data/1b_benchmark.test.tokens')
 
-    # Build vocabulary
-    vocab, word_counts = build_vocab(train_data)
+    train_toks, all_train = get_counts(train_data)
+    dev_toks, all_dev = get_counts(dev_data)
+    test_toks, all_test = get_counts(test_data)
 
-    # Preprocess data
-    train_data = preprocess_data(train_data, vocab)
-    dev_data = preprocess_data(dev_data, vocab)
-    test_data = preprocess_data(test_data, vocab)
+    train_data = tokenize(train_data, all_train)
+    dev_data = tokenize(dev_data, all_dev)
+    test_data = tokenize(test_data, all_test)
 
     # Train models
-    unigram_lm = UnigramLM(vocab)
+    unigram_lm = UnigramLM()
     unigram_lm.train(train_data)
-    bigram_lm = BigramLM(vocab)
+    bigram_lm = BigramLM()
     bigram_lm.train(train_data)
-    trigram_lm = TrigramLM(vocab)
+    trigram_lm = TrigramLM()
     trigram_lm.train(train_data)
 
     # Evaluate models
