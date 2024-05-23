@@ -145,7 +145,6 @@ def probabilities_add_one(counts, alpha=1):
 
 
 #---- Calculating perplexity of unseen corpus (dev or test data)----
-# is n the number of grams
 '''def perplexity(sentence, trigram_probs, n):
     # Convert sentence to a list if it's not already a list
     if not isinstance(sentence, list):
