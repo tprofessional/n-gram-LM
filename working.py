@@ -159,7 +159,11 @@ class UnigramLM:
         word_count = 0
         for sentence in data:
             for token in sentence:
-                log_prob += math.log(self.model[token])
+                # print('token prob: ', self.model[token], '\t log_prob = ', log_prob)
+                if (self.model[token] > 0):
+                    log_prob += math.log(self.model[token])
+                else:
+                    log_prob += 0
                 word_count += 1
         return math.exp(-log_prob / word_count)
     
@@ -261,7 +265,10 @@ def linear_interpolation(unigram, bigram, trigram, lambdas, data):
             p2 = bigram[sentence[i-1]][sentence[i]]
             p3 = trigram[sentence[i-2]][sentence[i-1]][sentence[i]]
             p = lambda1 * p1 + lambda2 * p2 + lambda3 * p3
-            log_prob += math.log(p)
+            if p > 0:
+                log_prob += math.log(p)
+            else:
+                log_prob += 0
             word_count += 1
     return math.exp(-log_prob / word_count)
 
