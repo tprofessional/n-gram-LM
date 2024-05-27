@@ -247,6 +247,7 @@ if __name__ == "__main__":
     # file = files[0]
     
     file = './A2-Data/1b_benchmark.train.tokens'
+    # file = './A2-Data/half.train.tokens'
     sentences = read(file)
     print("Training on {}...".format(file))
 
@@ -317,7 +318,11 @@ if __name__ == "__main__":
     print('Trigram Perplexity: ', perplexity(tri_snt_probs, total_occs))
     
     print('\n-------- LINEAR INTERPOLATION --------\n')
-    lambdas = [0.1, 0.3, 0.6]
+    # optimized lambdas
+    lambda1 = float(input("Please enter value for lambda 1: "))
+    lambda2 = float(input("Please enter value for lambda 2: "))
+    lambda3 = float(input("Please enter value for lambda 3: "))
+    lambdas = [lambda1, lambda2, lambda3]
 
     lin = linear_interpolation(lambdas, unigram_probs, bigram_probs, trigram_probs, tri_test_text)
     # print("linear interpolation: ", lin)
