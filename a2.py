@@ -18,9 +18,6 @@ Arguments:
     sentence {str} -- sentence to be tokenized, such as "I love NLP"
     tk_counts {Count container} -- collections.Counter() object to keep track of the number of each token
 
-Keyword Arguments:
-    pattern {str} -- reg-expression pattern for tokenizer (default: {default_pattern})
-
 Returns:
     tk_counts -- Counter of tokenized words, such as ['I', 'love', 'nlp'] and their frequencies
 '''
